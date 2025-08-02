@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 import { analyticsMapperIcon, formatCurrency } from "@/utils/analytics";
 import { ANALYSIS_DUMMY_STATS } from "@/constants/analytics";
 
@@ -36,4 +38,4 @@ const Stats = () => {
   );
 };
 
-export default Stats;
+export default memo(Stats);

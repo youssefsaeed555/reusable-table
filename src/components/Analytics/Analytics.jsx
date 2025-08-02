@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useState } from "react";
 
 import { ANALYTICS_COLUMNS, ANALYTICS_DUMMY_DATA } from "@/constants/analytics";
 
@@ -8,8 +8,10 @@ import Stats from "@/components/Analytics/Stats/Stats";
 import "./Analytics.less";
 
 const Analytics = () => {
-  const getRowId = useMemo((record, index) => {
-    return record?.id || index;
+  const [analytics, setAnalytics] = useState(ANALYTICS_DUMMY_DATA);
+
+  const getRowId = useCallback((record, index) => {
+    return record?.id ?? index;
   }, []);
 
   return (
@@ -25,7 +27,7 @@ const Analytics = () => {
           </p>
         </div>
         <img
-          src="/public/images/paymobLogo.png"
+          src="/images/paymobLogo.png"
           alt="paymob Icon"
           className="analytics-section__header-icon"
         />
@@ -34,16 +36,20 @@ const Analytics = () => {
       <Stats />
 
       <Table
-        data={ANALYTICS_DUMMY_DATA}
-        config={ANALYTICS_COLUMNS}
-        rowKey={getRowId}
-        searchable
+        data={analytics}
+        headersConfig={{
+          columnsConfig: ANALYTICS_COLUMNS,
+          searchable: true,
+          sortable: true,
+          rowKey: getRowId,
+        }}
         title={
           <section className="analytics-section__table-header">
-            <h2>{ANALYTICS_DUMMY_DATA.length} transactions</h2>
+            <h2>{analytics.length} transactions</h2>
             <p>Track your collected cash over a period of time.</p>
           </section>
         }
+        onUpdateData={setAnalytics}
       />
     </div>
   );
