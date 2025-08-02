@@ -156,3 +156,8 @@ export const ANALYSIS_DUMMY_STATS = [
     id: PAYMENT_STATUS.PAID,
   },
 ];
+
+export const SORT_DIRECTIONS = {
+  ASC: "asc",
+  DESC: "desc",
+};
