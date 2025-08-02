@@ -1,4 +1,4 @@
-import Analytics from "./components/Analytics/analytics";
+import Analytics from "./components/Analytics/Analytics";
 
 import "./styles/app.less";
 
