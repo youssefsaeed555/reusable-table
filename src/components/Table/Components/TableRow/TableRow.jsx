@@ -1,15 +1,18 @@
+import { useMemo } from "react";
+
 import "./TableRow.less";
 
-const TableRow = ({ data = [], config = {}, rowKey = () => {} }) => {
-  if (!data?.length) return null;
+const TableRow = ({ data = [], columnsConfig = {}, rowKey = () => {} }) => {
+  const columns = useMemo(() => Object.keys(columnsConfig), [columnsConfig]);
 
-  const columns = Object.keys(config);
+  if (!data?.length) return null;
 
   return data.map((item, index) => {
     const rowId = rowKey(item) ?? index;
 
     const renderCells = columns.map((column) => {
-      const columnConfig = config[column];
+      const columnConfig = columnsConfig[column];
+      const cellValue = columnConfig?.render?.(item) ?? "N/A";
 
       return (
         <td
@@ -17,7 +20,7 @@ const TableRow = ({ data = [], config = {}, rowKey = () => {} }) => {
           className="table__body-row-data"
           style={{ minWidth: columnConfig?.width || "auto" }}
         >
-          {columnConfig?.render?.(item) ?? "N/A"}
+          {cellValue}
         </td>
       );
     });
