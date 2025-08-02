@@ -1,65 +1,85 @@
 import EmptyState from "./Components/EmptyState/EmptyState";
 import TableHeader from "./Components/TableHeader/TableHeader";
 import TableRow from "./Components/TableRow/TableRow";
+import TableSearch from "./Components/TableSearch/TableSearch";
 
 import "./Table.less";
 
 /**
  * Table component to display data in a tabular format.
- * It can also be extended with additional features like sorting, filtering, and pagination.
- *
- * Props:
- * - data: Array of data objects to be displayed in the table.
- * - config: Configuration object for table headers and other settings.
- * - rowKey: Function to extract a unique key for each row.
- * - title: Optional title for the table.
- * - emptyState: Optional function to render a custom empty state.
- *
- * Usage:
+ * It can also be extended with additional features like sorting and searching.
+ * @param {Object} props - The properties for the Table component.
+ * @param {Array} props.data - The data to be displayed in the table.
+ * @param {Object} props.headersConfig - Configuration for the table headers.
+ * It includes:
+ * *  - columnsConfig: Configuration for each column.
+ * *  - sortable: Boolean indicating if the table is sortable.
+ * *  - searchable: Boolean indicating if the table is searchable.
+ * *  - rowKey: Function to get the unique key for each row.
+ * @param {string} props.title - The title of the header out of table.
+ * @param {Function} props.emptyState - Function to render when there is no data.
+ * @param {Function} props.onUpdateData - Callback function to update the data.
+ * @return {JSX.Element} The rendered Table component.
+ * @example
  * <Table
- *   data={data}
- *   config={config}
- *   rowKey={(row) => row.id}
- *   title="My Table"
- *   emptyState={() => <CustomEmptyState />}
+ *    data={data}
+ *    headersConfig={{columnsConfig: {}, sortable: true, searchable: true, rowKey: (row) => row.id}}
+ *    title="My Table"
+ *    emptyState={() => <div>No data available</div>}
+ *    onUpdateData={(newData) => console.log(newData)}
  * />
- *
- * Example:
- * const data = [{ id: 1, name: "Item 1" }]
- * const config = [{ label: "ID", render: (item) => item.id },{ label: "Name", render: (item) => item.name }];
- * */
+ */
 
 function Table({
   data = [],
-  config = {},
-  rowKey = () => {},
+  headersConfig = {},
   title,
   emptyState = () => {},
+  onUpdateData,
 }) {
+  const hasData = !!data.length;
+  const {
+    columnsConfig = {},
+    sortable = true,
+    searchable = false,
+    rowKey = () => {},
+  } = headersConfig;
+
   return (
     <div className="table-component">
-      {!data.length ? (
-        emptyState?.() || <EmptyState />
-      ) : (
-        <>
-          <div className="table-component__header">
-            {!!title && <div className="table-component__title">{title}</div>}
-            {/* //TODO: add actions here */}
-          </div>
-          <div className="table-component__wrapper">
-            <table className="table">
-              <thead className="table__header">
-                <tr className="table__header-row">
-                  <TableHeader config={config} />
-                </tr>
-              </thead>
-              <tbody className="table__body">
-                <TableRow data={data} config={config} rowKey={rowKey} />
-              </tbody>
-            </table>
-          </div>
-        </>
-      )}
+      <div className="table-component__header">
+        {!!title && <div className="table-component__title">{title}</div>}
+        <div className="table-component__actions">
+          {searchable && (
+            <TableSearch onUpdateData={onUpdateData} data={data} />
+          )}
+        </div>
+      </div>
+      <div className="table-component__wrapper">
+        {!hasData ? (
+          emptyState?.() || <EmptyState />
+        ) : (
+          <table className="table">
+            <thead className="table__header">
+              <tr className="table__header-row">
+                <TableHeader
+                  columnsConfig={columnsConfig}
+                  sortable={sortable}
+                  onUpdateData={onUpdateData}
+                  data={data}
+                />
+              </tr>
+            </thead>
+            <tbody className="table__body">
+              <TableRow
+                data={data}
+                columnsConfig={columnsConfig}
+                rowKey={rowKey}
+              />
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 }
