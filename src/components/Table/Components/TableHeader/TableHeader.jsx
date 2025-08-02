@@ -1,20 +1,65 @@
-import React, { Fragment } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import classNames from "classnames";
+
+import { SORT_DIRECTIONS } from "@/constants/analytics";
+import { useTableData } from "@/hooks/useTableData";
 
 import "./TableHeader.less";
 
-const TableHeader = ({ config = {} }) => {
-  const columns = Object.keys(config);
+const TableHeader = ({
+  columnsConfig = {},
+  sortable = true,
+  data,
+  onUpdateData,
+}) => {
+  const { sortOrder, handleSortClick } = useTableData({
+    data,
+    sortable,
+    onUpdateData,
+  });
+
+  const columns = Object.keys(columnsConfig);
   if (!columns.length) return null;
 
-  return columns.map((column) => {
-    const column_label = config[column].label || "";
+  return (
+    <>
+      {columns.map((column) => {
+        const column_label = columnsConfig[column]?.label || "";
+        const isActive = sortable && sortOrder.key === column;
+        const direction = sortable && isActive ? sortOrder.direction : "";
 
-    return (
-      <th key={column} className="table__header-row-data">
-        {column_label}
-      </th>
-    );
-  });
+        return (
+          <th
+            key={column}
+            className="table__header-row-data"
+            onClick={() => handleSortClick(column)}
+          >
+            <div className="table__header-row-data-content">
+              {column_label}
+              {sortable && (
+                <div className="table__header-row-data-content-sort-icons">
+                  <ChevronUp
+                    size={14}
+                    className={classNames({
+                      "table__header-row-data-content-sort-icons--active":
+                        direction === SORT_DIRECTIONS.ASC,
+                    })}
+                  />
+                  <ChevronDown
+                    size={14}
+                    className={classNames({
+                      "table__header-row-data-content-sort-icons--active":
+                        direction === SORT_DIRECTIONS.DESC,
+                    })}
+                  />
+                </div>
+              )}
+            </div>
+          </th>
+        );
+      })}
+    </>
+  );
 };
 
 export default TableHeader;
