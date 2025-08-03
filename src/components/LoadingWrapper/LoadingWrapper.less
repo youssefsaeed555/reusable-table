@@ -1,0 +1,35 @@
+@import "@/styles/variables.less";
+
+.loading-wrapper {
+  position: relative;
+
+  &__overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    inset: 0;
+    background: rgba(@white, 0.7);
+    z-index: 10;
+  }
+
+  &__spinner {
+    color: @primary-color;
+    animation: spin 1s linear infinite;
+  }
+
+  &__content {
+    transition: opacity 0.5s ease;
+
+    &.is-disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
