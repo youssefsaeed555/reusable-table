@@ -1,7 +1,10 @@
+import { useState } from "react";
+
 import EmptyState from "./Components/EmptyState/EmptyState";
 import TableHeader from "./Components/TableHeader/TableHeader";
 import TableRow from "./Components/TableRow/TableRow";
 import TableSearch from "./Components/TableSearch/TableSearch";
+import LoadingWrapper from "@/components/LoadingWrapper/LoadingWrapper";
 
 import "./Table.less";
 
@@ -37,6 +40,8 @@ function Table({
   emptyState = () => {},
   onUpdateData,
 }) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const hasData = !!data.length;
   const {
     columnsConfig = {},
@@ -51,7 +56,11 @@ function Table({
         {!!title && <div className="table-component__title">{title}</div>}
         <div className="table-component__actions">
           {searchable && (
-            <TableSearch onUpdateData={onUpdateData} data={data} />
+            <TableSearch
+              onUpdateData={onUpdateData}
+              data={data}
+              setIsLoading={setIsLoading}
+            />
           )}
         </div>
       </div>
@@ -59,25 +68,28 @@ function Table({
         {!hasData ? (
           emptyState?.() || <EmptyState />
         ) : (
-          <table className="table">
-            <thead className="table__header">
-              <tr className="table__header-row">
-                <TableHeader
-                  columnsConfig={columnsConfig}
-                  sortable={sortable}
-                  onUpdateData={onUpdateData}
+          <LoadingWrapper isLoading={isLoading}>
+            <table className="table">
+              <thead className="table__header">
+                <tr className="table__header-row">
+                  <TableHeader
+                    columnsConfig={columnsConfig}
+                    sortable={sortable}
+                    onUpdateData={onUpdateData}
+                    data={data}
+                    setIsLoading={setIsLoading}
+                  />
+                </tr>
+              </thead>
+              <tbody className="table__body">
+                <TableRow
                   data={data}
+                  columnsConfig={columnsConfig}
+                  rowKey={rowKey}
                 />
-              </tr>
-            </thead>
-            <tbody className="table__body">
-              <TableRow
-                data={data}
-                columnsConfig={columnsConfig}
-                rowKey={rowKey}
-              />
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </LoadingWrapper>
         )}
       </div>
     </div>

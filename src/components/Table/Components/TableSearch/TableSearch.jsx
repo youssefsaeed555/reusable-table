@@ -2,11 +2,20 @@ import { Search } from "lucide-react";
 
 import { useTableData } from "@/hooks/useTableData";
 
-const TableSearch = ({ onUpdateData, data }) => {
+const TableSearch = ({ onUpdateData, data, setIsLoading }) => {
   const { searchText, handleSearch } = useTableData({
     data,
     onUpdateData,
+    setIsLoading,
   });
+
+  const handleSearchWithLoading = (event) => {
+    //smiulate loading while searching
+    handleSearch(event);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+  };
 
   return (
     <div className="table-component__actions-search">
@@ -16,7 +25,7 @@ const TableSearch = ({ onUpdateData, data }) => {
         placeholder="Search all columns..."
         className="table-component__actions-search-input"
         value={searchText}
-        onChange={handleSearch}
+        onChange={(event) => handleSearchWithLoading(event)}
       />
     </div>
   );

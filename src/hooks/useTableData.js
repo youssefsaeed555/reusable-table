@@ -8,6 +8,7 @@ export const useTableData = ({
   sortable = false,
   onUpdateData,
   originalData = ANALYTICS_DUMMY_DATA,
+  setIsLoading,
 }) => {
   const [sortOrder, setSortOrder] = useState({ key: "", direction: "" });
   const [searchText, setSearchText] = useState("");
@@ -37,12 +38,14 @@ export const useTableData = ({
 
   const handleSortClick = (column) => {
     if (!sortable) return;
+    setIsLoading?.(true);
     const newDirection = getNextDirection(column);
     setSortOrder({ key: column, direction: newDirection });
     handleSort({ key: column, direction: newDirection });
   };
 
   const onSearch = useCallback((searchText) => {
+    setIsLoading?.(true);
     const filteredData = originalData.filter((item) =>
       Object.values(item).some((value) => {
         return String(value).toLowerCase().includes(searchText.toLowerCase());
@@ -51,7 +54,7 @@ export const useTableData = ({
     onUpdateData(filteredData);
   }, []);
 
-  const debouncedSearch = UseDebounce(onSearch, 500);
+  const debouncedSearch = UseDebounce(onSearch, 800);
 
   const handleSearch = (event) => {
     const value = event.target.value;

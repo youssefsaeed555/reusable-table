@@ -11,14 +11,27 @@ const TableHeader = ({
   sortable = true,
   data,
   onUpdateData,
+  setIsLoading,
 }) => {
   const { sortOrder, handleSortClick } = useTableData({
     data,
     sortable,
     onUpdateData,
+    setIsLoading,
   });
 
   const columns = Object.keys(columnsConfig);
+
+  const handleSortWithLoading = (column) => {
+    if (!sortable) return;
+
+    //smiulate loading while sorting
+    handleSortClick(column);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+  };
+
   if (!columns.length) return null;
 
   return (
@@ -32,7 +45,7 @@ const TableHeader = ({
           <th
             key={column}
             className="table__header-row-data"
-            onClick={() => handleSortClick(column)}
+            onClick={() => handleSortWithLoading(column)}
           >
             <div className="table__header-row-data-content">
               {column_label}
