@@ -4,7 +4,7 @@ A flexible and customizable table component built with React. It supports sortin
 
 
 ### 📷 Preview  
-You can check out the [live demo here](https://paymob-reusable-table.vercel.app/)
+You can check out the [live demo here](https://reusable-table-paymob.vercel.app/)
 
 
 ## 📸 Screenshots
